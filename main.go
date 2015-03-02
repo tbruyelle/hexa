@@ -6,14 +6,12 @@
 package main
 
 import (
-	"encoding/binary"
 	"time"
 
 	"github.com/tbruyelle/fsm"
 	"golang.org/x/mobile/app"
 	"golang.org/x/mobile/app/debug"
 	"golang.org/x/mobile/event"
-	"golang.org/x/mobile/f32"
 	"golang.org/x/mobile/geom"
 	"golang.org/x/mobile/gl"
 	"golang.org/x/mobile/sprite"
@@ -31,6 +29,7 @@ var (
 	tiles            map[rune]sprite.SubTex
 	player           *fsm.Object
 	screenW, screenH float32
+	hexSprite        sprite.SubTex
 )
 
 func main() {
@@ -56,6 +55,11 @@ func start() {
 	bg := &fsm.Object{Width: screenW, Height: screenH}
 	bg.Register(scene, eng)
 	bg.Sprite = fsm.SubTex(fsm.MustLoadTexture(eng, "bg0.png"), 0, 0, 1920, 1080)
+
+	// the hex sprite
+	hexSprite = fsm.SubTex(fsm.MustLoadTexture(eng, "hex.png"), 0, 0, 207, 179)
+
+	NewBoard()
 }
 
 func stop() {
@@ -89,32 +93,3 @@ func draw() {
 	eng.Render(scene.Node, now)
 	debug.DrawFPS()
 }
-
-var triangleData = f32.Bytes(binary.LittleEndian,
-	0.0, 0.4, 0.0, // top left
-	0.0, 0.0, 0.0, // bottom left
-	0.4, 0.0, 0.0, // bottom right
-)
-
-const (
-	coordsPerVertex = 3
-	vertexCount     = 3
-)
-
-const vertexShader = `#version 100
-uniform vec2 offset;
-
-attribute vec4 position;
-void main() {
-	// offset comes in with x/y values between 0 and 1.
-	// position bounds are -1 to 1.
-	vec4 offset4 = vec4(2.0*offset.x-1.0, 1.0-2.0*offset.y, 0, 0);
-	gl_Position = position + offset4;
-}`
-
-const fragmentShader = `#version 100
-precision mediump float;
-uniform vec4 color;
-void main() {
-	gl_FragColor = color;
-}`
