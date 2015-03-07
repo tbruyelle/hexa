@@ -57,7 +57,7 @@ func start() {
 	bg.Sprite = fsm.SubTex(fsm.MustLoadTexture(eng, "bg0.png"), 0, 0, 1920, 1080)
 
 	// the hex sprite
-	hexSprite = fsm.SubTex(fsm.MustLoadTexture(eng, "hex.png"), 0, 0, 207, 179)
+	hexSprite = fsm.SubTex(fsm.MustLoadTexture(eng, "hex-point-topped.png"), 0, 0, 183, 200)
 
 	NewBoard()
 }
